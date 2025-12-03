@@ -12,3 +12,5 @@ sources:
       - name: medications
       - name: med_admins
       - name: documents
+      - name: lab_results_json
+        description: Raw lab test results loaded from JSON files in src_data/lab_results/

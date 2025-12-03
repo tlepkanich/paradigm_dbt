@@ -117,3 +117,45 @@ models:
       - name: visit_id
         tests:
           - not_null
+
+  - name: stg_lab_results
+    description: >
+      Staging model for lab test results parsed from JSON files.
+      Each row represents one component of a lab test (e.g., one Glucose measurement).
+      The testResults array from each JSON file is unnested, so a single test can produce
+      multiple rows - one per component measured.
+    columns:
+      - name: test_id
+        description: Unique identifier for the lab test
+        tests:
+          - not_null
+      - name: order_id
+        description: Associated order ID
+        tests:
+          - not_null
+      - name: patient_id
+        description: Associated patient ID
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_patients')
+                field: patient_id
+      - name: result_date
+        description: Date when the test result was recorded
+        tests:
+          - not_null
+      - name: component_name
+        description: Name of the lab component measured (e.g., Glucose, Creatinine)
+        tests:
+          - not_null
+      - name: component_ref_hi
+        description: High reference value for this component
+      - name: component_ref_lo
+        description: Low reference value for this component
+      - name: component_units
+        description: Units of measurement (e.g., mg/dL, mmol/L)
+      - name: result_value
+        description: Actual measured value for this component
+        tests:
+          - not_null

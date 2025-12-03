@@ -23,3 +23,11 @@ create or replace table raw.med_admins as select * from 'src_data/med_admins.csv
 
 -- documents
 create or replace table raw.documents as select * from 'src_data/documents.csv';
+
+-- lab_results (raw JSON)
+create or replace table raw.lab_results_json as
+select * from read_json(
+    'src_data/lab_results/lab_*.json',
+    format = 'auto',
+    maximum_object_size = 2097152
+);
