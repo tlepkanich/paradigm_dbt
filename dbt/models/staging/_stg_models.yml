@@ -54,9 +54,17 @@ models:
       - name: patient_id
         tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_patients')
+                field: patient_id
       - name: condition_id
         tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_conditions')
+                field: condition_id
       - name: date_started
         tests:
           - not_null
@@ -70,6 +78,10 @@ models:
       - name: patient_condition_id
         tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_patient_conditions')
+                field: patient_condition_id
       - name: visit_date
         tests:
           - not_null
@@ -79,9 +91,17 @@ models:
       - name: patient_id
         tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_patients')
+                field: patient_id
       - name: medication_id
         tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_medications')
+                field: medication_id
       - name: date_started
         tests:
           - not_null
