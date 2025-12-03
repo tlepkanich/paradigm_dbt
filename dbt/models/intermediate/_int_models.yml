@@ -13,7 +13,19 @@ models:
         description: Calculated age in years based on date of birth
 
   - name: int_patient_medications__active
-    description: Patient medication administrations joined with patient and medication details
+    description: >
+      Patient medication administrations joined with patient and medication details.
+
+      **Incremental model** that only processes medication administrations since the
+      last run (based on date_started). Run with `--full-refresh` to rebuild.
+      Unique key: (patient_id, medication_id, date_started)
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - patient_id
+              - medication_id
+              - date_started
     columns:
       - name: patient_id
         description: Unique identifier for the patient
@@ -27,7 +39,12 @@ models:
         description: Boolean indicating if the medication is currently active (no stop date)
 
   - name: int_visits__with_patient_details
-    description: Visits enriched with patient demographics and condition information
+    description: >
+      Visits enriched with patient demographics and condition information.
+
+      **Incremental model** that only processes visits since the last run
+      (based on visit_date). Run with `--full-refresh` to rebuild.
+      Unique key: visit_id
     columns:
       - name: visit_id
         description: Unique identifier for the visit

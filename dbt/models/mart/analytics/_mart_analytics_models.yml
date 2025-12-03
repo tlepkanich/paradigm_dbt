@@ -6,6 +6,16 @@ models:
       Lab test results fact table for BI analytics. Contains denormalized lab test
       component results with patient demographics and order information. Each row
       represents one measured component from a lab test.
+
+      **Incremental model** that only processes lab results since the last run
+      (based on result_date). Run with `--full-refresh` flag to rebuild entire table.
+      Unique key: (test_id, component_name)
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - test_id
+              - component_name
     columns:
       - name: test_id
         description: Unique identifier for the lab test
