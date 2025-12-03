@@ -1,6 +1,8 @@
 {{
     config(
-        materialized='table'
+        materialized='incremental',
+        unique_key='visit_id',
+        on_schema_change='fail'
     )
 }}
 
@@ -16,6 +18,9 @@ with
 visits as (
 
     select * from {{ ref('stg_visits') }}
+    {% if is_incremental() %}
+    where visit_date >= (select max(visit_date) from {{ this }})
+    {% endif %}
 
 ),
 

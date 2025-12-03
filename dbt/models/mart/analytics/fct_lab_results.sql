@@ -1,8 +1,19 @@
+{{
+    config(
+        materialized='incremental',
+        unique_key=['test_id', 'component_name'],
+        on_schema_change='fail'
+    )
+}}
+
 with
 
 lab_results as (
 
     select * from {{ ref('int_lab_results__with_abnormal_flag') }}
+    {% if is_incremental() %}
+    where result_date >= (select max(result_date) from {{ this }})
+    {% endif %}
 
 ),
 

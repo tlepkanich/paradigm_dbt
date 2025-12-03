@@ -1,6 +1,8 @@
 {{
     config(
-        materialized='table'
+        materialized='incremental',
+        unique_key=['patient_id', 'medication_id', 'date_started'],
+        on_schema_change='fail'
     )
 }}
 
@@ -17,6 +19,9 @@ with
 med_admins as (
 
     select * from {{ ref('stg_med_admins') }}
+    {% if is_incremental() %}
+    where date_started >= (select max(date_started) from {{ this }})
+    {% endif %}
 
 ),
 
