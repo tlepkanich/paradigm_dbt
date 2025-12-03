@@ -1,26 +1,32 @@
 /*
-    This model should work.
-*/
+    Patients by Age
 
+    This model summarizes the count of patients by their age in years.
+*/
 
 with
 
-pt as ( select * from {{ ref( 'patients' ) }} ),
+patients as (
 
-pt_age as (
+    select * from {{ ref('stg_patients') }}
+
+),
+
+patients_with_age as (
 
     select
-        patient_id, 
-        datediff('years', pt.date_of_birth, current_date()) as age_years
+        patient_id,
+        datediff('year', date_of_birth, current_date) as age_years
 
-    from pt
+    from patients
 
 )
 
-select 
-    age_years, 
+select
+    age_years,
     count(distinct patient_id) as patient_count
 
-from pt_age
+from patients_with_age
 
 group by age_years
+order by age_years
