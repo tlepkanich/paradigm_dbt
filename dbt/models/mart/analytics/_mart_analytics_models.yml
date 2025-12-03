@@ -62,3 +62,141 @@ models:
           - accepted_values:
               arguments:
                 values: ['HIGH', 'LOW', 'NORMAL']
+
+  - name: patient_health_profile
+    description: >
+      Comprehensive patient health snapshot for risk stratification and care management.
+      Combines demographics, lifestyle factors, condition/medication counts, visit frequency,
+      and lab abnormalities into a health complexity score and risk category.
+    columns:
+      - name: patient_id
+        description: Unique patient identifier
+        tests:
+          - unique
+          - not_null
+      - name: first_name
+        description: Patient first name
+      - name: last_name
+        description: Patient last name
+      - name: age_years
+        description: Patient age in years
+      - name: gender
+        description: Patient gender
+      - name: is_smoker
+        description: Whether the patient is a smoker
+      - name: alcohol_use
+        description: Patient alcohol use status
+      - name: active_condition_count
+        description: Number of currently active conditions (not yet resolved)
+        tests:
+          - not_null
+      - name: active_medication_count
+        description: Number of currently active medications
+        tests:
+          - not_null
+      - name: visits_last_12mo
+        description: Number of visits in the last 12 months
+        tests:
+          - not_null
+      - name: abnormal_lab_count
+        description: Number of abnormal (HIGH/LOW) lab results
+        tests:
+          - not_null
+      - name: health_complexity_score
+        description: >
+          Calculated health complexity score based on weighted combination of:
+          (conditions * 2) + medications + (abnormal_labs / 5) + (visits / 10)
+        tests:
+          - not_null
+      - name: risk_category
+        description: Risk category based on complexity score (LOW <5, MEDIUM 5-10, HIGH >10)
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['LOW', 'MEDIUM', 'HIGH']
+
+  - name: condition_outcomes
+    description: >
+      Condition lifecycle metrics including duration, resolution rates, visit frequency,
+      and medication usage. Provides benchmarks for treatment effectiveness and resource planning.
+    columns:
+      - name: condition_id
+        description: Unique condition identifier
+        tests:
+          - unique
+          - not_null
+      - name: condition_name
+        description: Name of the condition
+        tests:
+          - not_null
+      - name: total_patients
+        description: Total number of patients with this condition
+        tests:
+          - not_null
+      - name: avg_duration_days
+        description: Average duration of condition episodes in days (for resolved conditions)
+      - name: resolution_rate_pct
+        description: Percentage of condition episodes that have been resolved (0-100)
+      - name: avg_visits_per_episode
+        description: Average number of visits per condition episode
+      - name: avg_medications_per_patient
+        description: Average number of medications per patient for this condition
+      - name: common_co_condition_ids
+        description: Top 3 most common co-occurring condition IDs (comma-separated)
+
+  - name: patient_visit_patterns
+    description: >
+      Patient engagement and care utilization patterns including visit frequency,
+      engagement duration, and conditions treated. Helps identify at-risk patients
+      and optimize capacity planning.
+    columns:
+      - name: patient_id
+        description: Unique patient identifier
+        tests:
+          - unique
+          - not_null
+      - name: first_name
+        description: Patient first name
+      - name: last_name
+        description: Patient last name
+      - name: age_years
+        description: Patient age in years
+      - name: gender
+        description: Patient gender
+      - name: total_visits
+        description: Total lifetime visits for this patient
+        tests:
+          - not_null
+      - name: first_visit_date
+        description: Date of first recorded visit
+        tests:
+          - not_null
+      - name: last_visit_date
+        description: Date of most recent visit
+        tests:
+          - not_null
+      - name: engagement_days
+        description: Days between first and last visit (engagement period)
+        tests:
+          - not_null
+      - name: avg_days_between_visits
+        description: Average days between consecutive visits
+      - name: visit_frequency_category
+        description: >
+          Categorized visit frequency: INFREQUENT (<2/year), REGULAR (2-6/year), FREQUENT (>6/year)
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['NONE', 'INFREQUENT', 'REGULAR', 'FREQUENT']
+      - name: conditions_treated_count
+        description: Number of distinct conditions treated
+        tests:
+          - not_null
+      - name: conditions_list
+        description: Comma-separated list of condition names treated
+      - name: is_currently_active
+        description: Whether patient has had a visit in the last 90 days
+        tests:
+          - not_null
