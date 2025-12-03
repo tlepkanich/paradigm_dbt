@@ -2,3 +2,93 @@ version: 2
 
 models:
   - name: patients_by_age
+    description: >
+      Patient demographics summary showing the distribution of patients by age.
+      This model aggregates the total count of patients for each age group,
+      calculated from their date of birth. Useful for understanding the age
+      demographics of the patient population.
+    columns:
+      - name: age_years
+        description: >
+          The age of patients in years, calculated as the difference between
+          their date of birth and the current date. This is the grouping
+          dimension for the aggregation.
+        data_tests:
+          - not_null
+
+      - name: patient_count
+        description: >
+          The distinct count of patients for each age. Each patient is counted
+          only once, even if they appear multiple times in the source data.
+
+  - name: patients_per_month
+    description: >
+      Monthly patient activity metrics showing the number of active patients
+      by month. A patient is considered active in a month if they had at least
+      one visit during that month. This model includes additional metrics on
+      visit volume and conditions treated to provide context on patient activity
+      patterns over time.
+    columns:
+      - name: activity_month
+        description: >
+          The month in which patient activity is measured, truncated to the
+          first day of the month (YYYY-MM-01 format). This is derived from
+          visit dates and serves as the primary grouping dimension.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: active_patient_count
+        description: >
+          The distinct count of patients who had at least one visit during
+          the month. Patients are only counted once per month regardless of
+          the number of visits.
+        data_tests:
+          - not_null
+
+      - name: total_visits
+        description: >
+          The total count of patient visits that occurred during the month.
+          A patient may have multiple visits within a single month.
+        data_tests:
+          - not_null
+
+      - name: unique_conditions_treated
+        description: >
+          The distinct count of medical conditions that were associated with
+          visits during the month. This helps identify the variety of care
+          being provided.
+
+  - name: medications_per_month
+    description: >
+      Monthly medication utilization metrics showing the number of patients
+      actively taking each medication by month. A patient is considered to be
+      actively taking a medication if the month falls between the medication
+      start date and stop date (or current date if no stop date). This model
+      uses a date spine to generate all months and cross joins with medication
+      administrations to create time-series data for tracking medication trends.
+    columns:
+      - name: activity_month
+        description: >
+          The month for which medication activity is measured, truncated to the
+          first day of the month (YYYY-MM-01 format). Generated via date spine
+          from the earliest medication start date to the current date.
+        data_tests:
+          - not_null
+
+      - name: medication_name
+        description: >
+          The name of the medication being tracked. This joins from the
+          medications reference table and serves as one of the grouping
+          dimensions alongside activity_month.
+        data_tests:
+          - not_null
+
+      - name: active_patient_count
+        description: >
+          The distinct count of patients who were actively taking the medication
+          during the month. A patient is considered active if the month falls
+          within their medication administration period (start date through
+          stop date or current date if ongoing).
+        data_tests:
+          - not_null
