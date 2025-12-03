@@ -1,7 +1,20 @@
+with
 
+source as (
 
-SELECT
-    *,
-    null as updated_at,
-    id as patient_id
-from {{ source( 'test_data', 'patients' ) }}
+    select * from {{ source('test_data', 'patients') }}
+
+),
+
+renamed as (
+
+    select
+        *,
+        null as updated_at,
+        id as patient_id
+
+    from source
+
+)
+
+select * from renamed
