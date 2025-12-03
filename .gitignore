@@ -1,0 +1,9 @@
+poetry.lock
+logs/*
+answer_key.txt
+venv/
+.user.yml
+target/
+dbt_packages/
+*.duckdb
+*.duckdb.wal
