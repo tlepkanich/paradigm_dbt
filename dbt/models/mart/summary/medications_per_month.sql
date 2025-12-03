@@ -74,4 +74,4 @@ final as (
 )
 
 select * from final
-order by activity_month, medication_name
+order by 1, 2

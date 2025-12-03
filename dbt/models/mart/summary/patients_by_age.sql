@@ -18,5 +18,5 @@ select
 
 from patients
 
-group by age_years
-order by age_years
+group by 1
+order by 1

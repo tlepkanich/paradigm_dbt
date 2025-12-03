@@ -28,4 +28,4 @@ final as (
 )
 
 select * from final
-order by activity_month
+order by 1
