@@ -56,10 +56,7 @@ joined as (
         ma.dosage,
         ma.date_started,
         ma.date_stopped,
-        case
-            when ma.date_stopped is null then true
-            else false
-        end as is_currently_active
+        {{ is_active('ma.date_stopped') }} as is_currently_active
 
     from med_admins ma
 

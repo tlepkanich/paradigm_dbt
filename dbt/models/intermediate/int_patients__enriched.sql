@@ -29,7 +29,7 @@ enriched as (
         date_of_death,
         date_activated,
         date_deactivated,
-        datediff('year', date_of_birth, current_date) as age_years,
+        {{ calculate_age_years('date_of_birth') }} as age_years,
         case
             when date_of_death is not null then false
             when date_deactivated is not null then false
@@ -43,7 +43,4 @@ enriched as (
 
 select * from enriched
 
-qualify 1 = row_number() over (
-    partition by patient_id
-    order by updated_at desc nulls last
-)
+{{ deduplicate_by_latest('patient_id', 'updated_at') }}

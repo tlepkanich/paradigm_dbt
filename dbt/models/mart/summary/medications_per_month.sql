@@ -18,8 +18,8 @@ patient_medications as (
 date_bounds as (
 
     select
-        date_trunc('month', min(date_started)) as min_month,
-        date_trunc('month', current_date) as max_month
+        {{ truncate_to_month('min(date_started)') }} as min_month,
+        {{ truncate_to_month('current_date') }} as max_month
 
     from patient_medications
 
@@ -27,13 +27,7 @@ date_bounds as (
 
 date_spine as (
 
-    select unnest(
-        generate_series(
-            min_month,
-            max_month,
-            interval '1 month'
-        )
-    )::date as activity_month
+    {{ generate_month_spine('min_month', 'max_month') }}
 
     from date_bounds
 
@@ -52,10 +46,10 @@ active_medications as (
     cross join patient_medications pm
 
     where
-        ds.activity_month >= date_trunc('month', pm.date_started)
+        ds.activity_month >= {{ truncate_to_month('pm.date_started') }}
         and (
             pm.date_stopped is null
-            or ds.activity_month <= date_trunc('month', pm.date_stopped)
+            or ds.activity_month <= {{ truncate_to_month('pm.date_stopped') }}
         )
 
 ),

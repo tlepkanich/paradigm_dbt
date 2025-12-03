@@ -47,8 +47,8 @@ joined as (
     select
         v.visit_id,
         v.visit_date,
-        date_trunc('month', v.visit_date) as visit_month,
-        date_trunc('year', v.visit_date) as visit_year,
+        {{ truncate_to_month('v.visit_date') }} as visit_month,
+        {{ truncate_to_year('v.visit_date') }} as visit_year,
         v.patient_condition_id,
         pc.patient_id,
         p.first_name,

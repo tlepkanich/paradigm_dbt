@@ -63,7 +63,7 @@ models:
               arguments:
                 values: ['HIGH', 'LOW', 'NORMAL']
 
-  - name: patient_health_profile
+  - name: fct_patient_health_profile
     description: >
       Comprehensive patient health snapshot for risk stratification and care management.
       Combines demographics, lifestyle factors, condition/medication counts, visit frequency,
@@ -116,7 +116,7 @@ models:
               arguments:
                 values: ['LOW', 'MEDIUM', 'HIGH']
 
-  - name: condition_outcomes
+  - name: fct_condition_outcomes
     description: >
       Condition lifecycle metrics including duration, resolution rates, visit frequency,
       and medication usage. Provides benchmarks for treatment effectiveness and resource planning.
@@ -145,7 +145,7 @@ models:
       - name: common_co_condition_ids
         description: Top 3 most common co-occurring condition IDs (comma-separated)
 
-  - name: patient_visit_patterns
+  - name: fct_patient_visit_patterns
     description: >
       Patient engagement and care utilization patterns including visit frequency,
       engagement duration, and conditions treated. Helps identify at-risk patients

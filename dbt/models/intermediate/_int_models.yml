@@ -59,3 +59,21 @@ models:
         description: Date of the visit
         tests:
           - not_null
+
+  - name: int_lab_results__with_abnormal_flag
+    description: >
+      Lab results enriched with abnormality flags based on reference ranges.
+      Adds result_status column (HIGH/LOW/NORMAL) by comparing result values
+      against component-specific reference ranges.
+    columns:
+      - name: test_id
+        description: Unique identifier for the lab test
+        tests:
+          - not_null
+      - name: result_status
+        description: Abnormality flag (HIGH/LOW/NORMAL)
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['HIGH', 'LOW', 'NORMAL']

@@ -2,15 +2,123 @@ version: 2
 
 sources:
   - name: test_data
+    description: Raw healthcare data loaded from CSV and JSON files
     schema: raw
     tables:
       - name: patients
-      - name: orders
-      - name: patient_conditions
-      - name: visits
+        description: >
+          Patient demographic and lifecycle information including personal details,
+          smoking/alcohol habits, and activation/deactivation dates.
+        columns:
+          - name: id
+            description: Auto-incrementing surrogate key
+          - name: patient_id
+            description: Business key for patient identification
+          - name: date_of_birth
+            description: Patient date of birth for age calculations
+          - name: date_of_death
+            description: Date of death if applicable (null if alive)
+          - name: date_activated
+            description: Date patient record was activated in system
+          - name: date_deactivated
+            description: Date patient record was deactivated (null if active)
+
       - name: conditions
+        description: Reference table of medical conditions/diagnoses
+        columns:
+          - name: condition_id
+            description: Unique identifier for condition
+          - name: condition_name
+            description: Human-readable condition name
+
       - name: medications
+        description: Reference table of medication inventory
+        columns:
+          - name: medication_id
+            description: Unique identifier for medication
+          - name: medication_name
+            description: Human-readable medication name
+
+      - name: patient_conditions
+        description: >
+          Patient condition associations tracking when conditions were
+          diagnosed and resolved.
+        columns:
+          - name: patient_condition_id
+            description: Unique identifier for patient-condition association
+          - name: patient_id
+            description: Foreign key to patients table
+          - name: condition_id
+            description: Foreign key to conditions table
+          - name: date_started
+            description: Date condition was diagnosed
+          - name: date_ended
+            description: Date condition was resolved (null if ongoing)
+
+      - name: visits
+        description: Patient clinical visit records
+        columns:
+          - name: id
+            description: Auto-incrementing surrogate key
+          - name: patient_condition_id
+            description: Foreign key to patient_conditions (visit reason)
+          - name: visit_date
+            description: Date of clinical visit
+
       - name: med_admins
+        description: Medication administration records tracking patient prescriptions
+        columns:
+          - name: patient_id
+            description: Foreign key to patients table
+          - name: patient_condition_id
+            description: Foreign key to patient_conditions (prescription reason)
+          - name: medication_id
+            description: Foreign key to medications table
+          - name: dosage
+            description: Dosage amount and frequency
+          - name: date_started
+            description: Date medication was started
+          - name: date_stopped
+            description: Date medication was stopped (null if ongoing)
+
       - name: documents
+        description: Clinical documents and notes associated with patient visits
+        columns:
+          - name: document_id
+            description: Unique identifier for document
+          - name: patient_id
+            description: Foreign key to patients table
+          - name: visit_id
+            description: Foreign key to visits table
+          - name: document_text
+            description: Full text content of clinical document
+
+      - name: orders
+        description: Lab test orders placed for patients
+        columns:
+          - name: order_id
+            description: Unique identifier for lab order
+          - name: patient_id
+            description: Foreign key to patients table
+          - name: order_date
+            description: Date lab test was ordered
+
       - name: lab_results_json
-        description: Raw lab test results loaded from JSON files in src_data/lab_results/
+        description: >
+          Raw lab test results loaded from JSON files in src_data/lab_results/.
+          Each JSON contains testId, orderId, patientId, resultDate, and a
+          testResults array with component measurements. Unnested in staging
+          layer to create relational format.
+        columns:
+          - name: testId
+            description: Unique identifier for lab test
+          - name: orderId
+            description: Associated lab order
+          - name: patientId
+            description: Patient who received test
+          - name: resultDate
+            description: Date test results were recorded
+          - name: testResults
+            description: >
+              Nested array of component results containing componentName,
+              resultValue, componentUnits, componentRefHi, componentRefLo
