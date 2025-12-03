@@ -1,0 +1,54 @@
+version: 2
+
+models:
+  - name: fct_lab_results
+    description: >
+      Lab test results fact table for BI analytics. Contains denormalized lab test
+      component results with patient demographics and order information. Each row
+      represents one measured component from a lab test.
+    columns:
+      - name: test_id
+        description: Unique identifier for the lab test
+        tests:
+          - not_null
+      - name: order_id
+        description: Associated order ID
+        tests:
+          - not_null
+      - name: patient_id
+        description: Patient identifier
+        tests:
+          - not_null
+      - name: first_name
+        description: Patient first name
+      - name: last_name
+        description: Patient last name
+      - name: date_of_birth
+        description: Patient date of birth
+      - name: result_date
+        description: Date the test result was recorded
+        tests:
+          - not_null
+      - name: order_date
+        description: Date the order was placed
+      - name: component_name
+        description: Name of the lab component (e.g., Glucose, Creatinine)
+        tests:
+          - not_null
+      - name: result_value
+        description: Measured value for the component
+        tests:
+          - not_null
+      - name: component_units
+        description: Units of measurement (e.g., mg/dL, mmol/L)
+      - name: component_ref_hi
+        description: High reference value for this component
+      - name: component_ref_lo
+        description: Low reference value for this component
+      - name: result_status
+        description: Status of the result (HIGH, LOW, NORMAL) based on reference ranges
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['HIGH', 'LOW', 'NORMAL']
