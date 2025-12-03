@@ -1,12 +1,31 @@
 /*
     Patients Per Month
 
-    This model should give the total number of active patients by month.
-
-    Feel free to include additional columns with other information, but make sure to summarize by month.
-
+    This model gives the total number of active patients by month.
+    A patient is considered active in a month if they had a visit during that month.
 */
 
-{{ config(enabled=false) }}
+with
 
+visits as (
 
+    select * from {{ ref('int_visits__with_patient_details') }}
+
+),
+
+final as (
+
+    select
+        visit_month as activity_month,
+        count(distinct patient_id) as active_patient_count,
+        count(distinct visit_id) as total_visits,
+        count(distinct condition_id) as unique_conditions_treated
+
+    from visits
+
+    group by 1
+
+)
+
+select * from final
+order by 1

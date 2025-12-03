@@ -1,9 +1,44 @@
 version: 2
 
 models:
-  - name: patients
+  - name: int_patients__enriched
+    description: Deduplicated patient records with calculated age
     columns:
       - name: patient_id
+        description: Unique identifier for the patient
         tests:
           - unique
+          - not_null
+      - name: age_years
+        description: Calculated age in years based on date of birth
+
+  - name: int_patient_medications__active
+    description: Patient medication administrations joined with patient and medication details
+    columns:
+      - name: patient_id
+        description: Unique identifier for the patient
+        tests:
+          - not_null
+      - name: medication_id
+        description: Unique identifier for the medication
+        tests:
+          - not_null
+      - name: is_currently_active
+        description: Boolean indicating if the medication is currently active (no stop date)
+
+  - name: int_visits__with_patient_details
+    description: Visits enriched with patient demographics and condition information
+    columns:
+      - name: visit_id
+        description: Unique identifier for the visit
+        tests:
+          - unique
+          - not_null
+      - name: patient_id
+        description: Unique identifier for the patient
+        tests:
+          - not_null
+      - name: visit_date
+        description: Date of the visit
+        tests:
           - not_null
