@@ -9,39 +9,19 @@ with
 
 visits as (
 
-    select * from {{ ref('stg_visits') }}
-
-),
-
-patients_by_month as (
-
-    select
-        date_trunc('month', visit_date) as activity_month,
-        patient_condition_id,
-        count(distinct visit_id) as visit_count
-
-    from visits
-
-    group by 1, 2
-
-),
-
-patient_conditions as (
-
-    select * from {{ ref('stg_patient_conditions') }}
+    select * from {{ ref('int_visits__with_patient_details') }}
 
 ),
 
 final as (
 
     select
-        pbm.activity_month,
-        count(distinct pc.patient_id) as active_patient_count,
-        sum(pbm.visit_count) as total_visits
+        visit_month as activity_month,
+        count(distinct patient_id) as active_patient_count,
+        count(distinct visit_id) as total_visits,
+        count(distinct condition_id) as unique_conditions_treated
 
-    from patients_by_month pbm
-    left join patient_conditions pc
-        on pbm.patient_condition_id = pc.patient_condition_id
+    from visits
 
     group by 1
 

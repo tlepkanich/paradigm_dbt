@@ -8,15 +8,9 @@
 
 with
 
-med_admins as (
+patient_medications as (
 
-    select * from {{ ref('stg_med_admins') }}
-
-),
-
-medications as (
-
-    select * from {{ ref('stg_medications') }}
+    select * from {{ ref('int_patient_medications__active') }}
 
 ),
 
@@ -27,7 +21,7 @@ date_bounds as (
         date_trunc('month', min(date_started)) as min_month,
         date_trunc('month', current_date) as max_month
 
-    from med_admins
+    from patient_medications
 
 ),
 
@@ -50,17 +44,18 @@ active_medications as (
 
     select
         ds.activity_month,
-        ma.medication_id,
-        ma.patient_id
+        pm.medication_id,
+        pm.medication_name,
+        pm.patient_id
 
     from date_spine ds
-    cross join med_admins ma
+    cross join patient_medications pm
 
     where
-        ds.activity_month >= date_trunc('month', ma.date_started)
+        ds.activity_month >= date_trunc('month', pm.date_started)
         and (
-            ma.date_stopped is null
-            or ds.activity_month <= date_trunc('month', ma.date_stopped)
+            pm.date_stopped is null
+            or ds.activity_month <= date_trunc('month', pm.date_stopped)
         )
 
 ),
@@ -68,13 +63,11 @@ active_medications as (
 final as (
 
     select
-        am.activity_month,
-        m.medication_name,
-        count(distinct am.patient_id) as active_patient_count
+        activity_month,
+        medication_name,
+        count(distinct patient_id) as active_patient_count
 
-    from active_medications am
-    left join medications m
-        on am.medication_id = m.medication_id
+    from active_medications
 
     group by 1, 2
 
