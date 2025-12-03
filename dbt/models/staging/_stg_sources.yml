@@ -1,7 +1,14 @@
-version 2:
+version: 2
 
 sources:
   - name: test_data
     schema: raw
     tables:
       - name: patients
+      - name: orders
+      - name: patient_conditions
+      - name: visits
+      - name: conditions
+      - name: medications
+      - name: med_admins
+      - name: documents
